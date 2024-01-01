@@ -1,6 +1,8 @@
 package de.cyklon.jui.render;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 
 public final class FontRenderer {
 
@@ -87,8 +89,22 @@ public final class FontRenderer {
 
 	}
 
+	public Font getFont() {
+		return font==null ? graphics.getFont() : font;
+	}
+
 	public int stringWidth(String text) {
-		return graphics.getFontMetrics(font==null ? graphics.getFont() : font).stringWidth(text);
+		return graphics.getFontMetrics(getFont()).stringWidth(text);
+	}
+
+	public int stringHeight(String text) {
+		return (int) getBounds(text, 0, 0).getHeight();
+	}
+
+	public Rectangle getBounds(String text, int x, int y) {
+		FontRenderContext frc = (graphics instanceof Graphics2D g2d ? g2d.getFontRenderContext() : graphics.getFontMetrics().getFontRenderContext());
+		GlyphVector vec = getFont().createGlyphVector(frc, text);
+		return vec.getPixelBounds(null, x, y);
 	}
 
 	public static enum Alignment {

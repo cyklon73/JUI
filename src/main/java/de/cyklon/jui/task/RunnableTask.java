@@ -1,8 +1,6 @@
 package de.cyklon.jui.task;
 
-import de.cyklon.jui.app.App;
-
-import java.awt.*;
+import de.cyklon.jui.App;
 
 public abstract class RunnableTask {
 
@@ -13,7 +11,7 @@ public abstract class RunnableTask {
 	}
 
 
-	public abstract void run(App app, Graphics graphics);
+	public abstract void run(App app);
 
 	public void cancel(App app) {
 		app.cancelTask(id);

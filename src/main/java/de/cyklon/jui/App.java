@@ -1,14 +1,13 @@
-package de.cyklon.jui.app;
+package de.cyklon.jui;
 
-import de.cyklon.jui.Disposable;
-import de.cyklon.jui.component.Component;
+import de.cyklon.jui.cursor.Cursor;
+import de.cyklon.jui.input.Mouse;
+import de.cyklon.jui.input.MouseInfo;
 import de.cyklon.jui.task.RunnableTask;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public interface App extends Disposable {
@@ -73,20 +72,24 @@ public interface App extends Disposable {
 
 	GraphicsDevice getScreen();
 
-	Collection<Component> getComponents();
+	UICanvas getCanvas();
 
-	void add(Component... component);
-
-	void clearComponents();
+	void setCanvas(UICanvas canvas);
 
 	long runTask(Consumer<App> consumer);
-
-	long runTask(BiConsumer<App, Graphics> consumer);
 
 	long runTask(RunnableTask task);
 
 	void cancelTask(long id);
 
 	void center();
+
+	void setCursor(Cursor cursor);
+
+	Cursor getCursor();
+
+	Mouse getMouse();
+
+	MouseInfo getMouseInfo();
 
 }

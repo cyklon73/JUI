@@ -1,4 +1,4 @@
-package de.cyklon.jui.app;
+package de.cyklon.jui;
 
 import de.cyklon.jui.event.window.WindowHideEvent;
 import de.cyklon.jui.event.window.WindowMoveEvent;
@@ -17,28 +17,28 @@ class EventDispatcher {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				if (e.getComponent() instanceof AppBuilder.AppImpl impl) {
-					new WindowResizeEvent(impl.getApp()).callEvent();
+					new WindowResizeEvent(impl.app).callEvent();
 				}
 			}
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				if (e.getComponent() instanceof AppBuilder.AppImpl impl) {
-					new WindowMoveEvent(impl.getApp()).callEvent();
+					new WindowMoveEvent(impl.app).callEvent();
 				}
 			}
 
 			@Override
 			public void componentShown(ComponentEvent e) {
 				if (e.getComponent() instanceof AppBuilder.AppImpl impl) {
-					new WindowShowEvent(impl.getApp()).callEvent();
+					new WindowShowEvent(impl.app).callEvent();
 				}
 			}
 
 			@Override
 			public void componentHidden(ComponentEvent e) {
 				if (e.getComponent() instanceof AppBuilder.AppImpl impl) {
-					new WindowHideEvent(impl.getApp()).callEvent();
+					new WindowHideEvent(impl.app).callEvent();
 				}
 			}
 		});

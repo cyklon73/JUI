@@ -1,7 +1,7 @@
 package de.cyklon.jui.event;
 
 import de.cyklon.jevent.Event;
-import de.cyklon.jui.app.App;
+import de.cyklon.jui.App;
 
 public class AppEvent extends Event {
 

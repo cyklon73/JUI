@@ -1,7 +1,7 @@
 package de.cyklon.jui.event;
 
 import de.cyklon.jevent.Cancellable;
-import de.cyklon.jui.app.App;
+import de.cyklon.jui.App;
 
 public class CancellableAppEvent extends AppEvent implements Cancellable {
 

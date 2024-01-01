@@ -1,14 +1,20 @@
-package de.cyklon.jui.app;
+package de.cyklon.jui;
 
-import de.cyklon.jui.component.Component;
+import de.cyklon.jui.component.UIComponent;
+import de.cyklon.jui.component.UILabel;
+import de.cyklon.jui.cursor.Cursor;
+import de.cyklon.jui.input.Mouse;
+import de.cyklon.jui.input.MouseInfo;
+import de.cyklon.jui.render.BufferedRenderer;
 import de.cyklon.jui.task.RunnableTask;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class AppBuilder {
@@ -59,16 +65,10 @@ public class AppBuilder {
 	}
 
 	public App build() {
-		return new AppImpl(title, undecorated, maxFPS, icon, size).getApp();
+		return new AppImpl(title, undecorated, maxFPS, icon, size).app;
 	}
 
-	private static final class ImmutableApp implements App {
-
-		private final AppImpl app;
-
-		public ImmutableApp(AppImpl app) {
-			this.app = app;
-		}
+	private record ImmutableApp(AppImpl app) implements App {
 
 		@Override
 		public void setTitle(String title) {
@@ -192,7 +192,7 @@ public class AppBuilder {
 
 		@Override
 		public long getCurrentFrame() {
-			return app.getCurrentFrame();
+			return app.currentFrame;
 		}
 
 		@Override
@@ -202,17 +202,17 @@ public class AppBuilder {
 
 		@Override
 		public double getDeltaTime() {
-			return app.getDeltaTime();
+			return app.deltaTime;
 		}
 
 		@Override
 		public double getFPS() {
-			return app.getFPS();
+			return 1e+9 / getDeltaTime();
 		}
 
 		@Override
 		public int getIntFPS() {
-			return app.getIntFPS();
+			return (int) Math.round(getFPS());
 		}
 
 		@Override
@@ -222,7 +222,7 @@ public class AppBuilder {
 
 		@Override
 		public double getMaxFPS() {
-			return app.getMaxFPS();
+			return app.maxFps;
 		}
 
 		@Override
@@ -231,27 +231,17 @@ public class AppBuilder {
 		}
 
 		@Override
-		public Collection<Component> getComponents() {
-			return app.getComponentCollection();
+		public UICanvas getCanvas() {
+			return app.canvas;
 		}
 
 		@Override
-		public void add(Component... component) {
-			app.add(component);
-		}
-
-		@Override
-		public void clearComponents() {
-			app.clearComponents();
+		public void setCanvas(UICanvas canvas) {
+			app.canvas = canvas;
 		}
 
 		@Override
 		public long runTask(Consumer<App> consumer) {
-			return app.runTask(consumer);
-		}
-
-		@Override
-		public long runTask(BiConsumer<App, Graphics> consumer) {
 			return app.runTask(consumer);
 		}
 
@@ -271,6 +261,26 @@ public class AppBuilder {
 		}
 
 		@Override
+		public void setCursor(Cursor cursor) {
+			app.cursor = cursor;
+		}
+
+		@Override
+		public Cursor getCursor() {
+			return app.cursor;
+		}
+
+		@Override
+		public Mouse getMouse() {
+			return app.mouse;
+		}
+
+		@Override
+		public MouseInfo getMouseInfo() {
+			return app.mouseInfo;
+		}
+
+		@Override
 		public void dispose() {
 			app.dispose();
 		}
@@ -279,13 +289,14 @@ public class AppBuilder {
 	static final class AppImpl extends JFrame implements Runnable {
 
 
-		private final App app;
-		private final List<Component> components = new ArrayList<>();
+		final App app;
 		private final List<RunnableTask> tasks = new ArrayList<>();
 		private final Queue<Long> markedRemoval = new ArrayDeque<>();
 		private long currentFrame = 0;
 		private final Panel panel;
 		private Thread loopThread;
+
+
 		private double maxFps;
 		private double updateInterval;
 		private double deltaTime;
@@ -293,10 +304,34 @@ public class AppBuilder {
 		private boolean manual_update;
 		private long lastUpdate = System.nanoTime();
 
+
+		private Cursor cursor;
+		private final MouseImpl mouse;
+		private final MouseInfo mouseInfo;
+		private UICanvas canvas;
+
 		public AppImpl(String title, boolean undecorated, double maxFps, Image icon, Dimension size) {
 			super();
 			this.app = new ImmutableApp(this);
-			setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+			this.cursor = Cursor.getCursor(0);
+			this.mouse = new MouseImpl(app);
+			MouseInfo mi = MouseInfo.getInfo();
+			this.mouseInfo = new MouseInfo() {
+				@Override
+				public Point getPosition() {
+					Point p = mi.getPosition();
+					return new Point(p.x-getX()-8, p.y-getY()-30);
+				}
+
+				@Override
+				public GraphicsDevice getScreen() {
+					return mi.getScreen();
+				}
+			};
+			addMouseListener(mouse.listener());
+
+			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 			setMaxFPS(maxFps);
 			setTitle(title);
@@ -306,12 +341,7 @@ public class AppBuilder {
 			setSize(size);
 			center();
 
-
 			setVisible(true);
-		}
-
-		public App getApp() {
-			return app;
 		}
 
 		private void checkThread() {
@@ -331,11 +361,11 @@ public class AppBuilder {
 			long current = System.nanoTime();
 			deltaTime = current - lastUpdate;
 			lastUpdate = current;
+			this.mouse.onFrame();
 			if (!markedRemoval.isEmpty()) markedRemoval.forEach(id -> tasks.removeIf(c -> c.getTaskId()==id));
-			tasks.forEach(t -> t.run(app, g));
-			components.forEach(c -> c.render(g));;
+			tasks.forEach(t -> t.run(app));
+			if (canvas!=null) canvas.draw(app, g);
 			g.dispose();
-			//System.gc();
 		}
 
 		@Override
@@ -388,24 +418,8 @@ public class AppBuilder {
 			System.exit(0);
 		}
 
-		public long getCurrentFrame() {
-			return currentFrame;
-		}
-
 		public void update() {
 			repaint();
-		}
-
-		public double getDeltaTime() {
-			return deltaTime;
-		}
-
-		public double getFPS() {
-			return 1e+9/getDeltaTime();
-		}
-
-		public int getIntFPS() {
-			return (int) Math.round(getFPS());
 		}
 
 		public void setMaxFPS(double maxFPS) {
@@ -420,10 +434,6 @@ public class AppBuilder {
 			checkThread();
 		}
 
-		public double getMaxFPS() {
-			return maxFps;
-		}
-
 		public GraphicsDevice getScreen() {
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			GraphicsDevice[] screens = ge.getScreenDevices();
@@ -434,27 +444,11 @@ public class AppBuilder {
 			return null;
 		}
 
-		public Collection<Component> getComponentCollection() {
-			return Collections.unmodifiableCollection(components);
-		}
-
-		public void add(Component... component) {
-			components.addAll(Arrays.asList(component));
-		}
-
-		public void clearComponents() {
-			components.clear();
-		}
-
 		public long runTask(Consumer<App> consumer) {
-			return runTask((app, graphics) -> consumer.accept(app));
-		}
-
-		public long runTask(BiConsumer<App, Graphics> consumer) {
 			return runTask(new RunnableTask() {
 				@Override
-				public void run(App app, Graphics graphics) {
-					consumer.accept(app, graphics);
+				public void run(App app) {
+					consumer.accept(app);
 				}
 			});
 		}
@@ -484,13 +478,23 @@ public class AppBuilder {
 
 		private final Consumer<Graphics> onFrame;
 
+		private final UIComponent component;
+		private final BufferedRenderer renderer = new BufferedRenderer(100, 100);
+		private final BufferedImage bi;
 		public Panel(Consumer<Graphics> onFrame) {
 			this.onFrame = onFrame;
+			this.component = new UILabel(20, 20, "test");
+			renderer.startFontRenderer().drawString("test123", 20, 20);
+			bi = renderer.current;
+			renderer.finish();
 		}
 
 		@Override
 		protected void paintComponent(Graphics g) {
 			onFrame.accept(g);
+			//component.draw(null, g);
+			//renderer.render(0, 0, g);
+			//g.drawImage(bi, 0, 0, this);
 		}
 	}
 
