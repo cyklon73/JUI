@@ -1,7 +1,7 @@
-![[Java CI]](https://github.com/Utils4J/JEvent/actions/workflows/check.yml/badge.svg)
-![[Latest Version]](https://maven.mineking.dev/api/badge/latest/releases/de/cyklon/JEvent?prefix=v&name=Latest%20Version&color=0374b5)
+![[Java CI]](https://github.com/cyklon73/JUI/actions/workflows/check.yml/badge.svg)
+![[Latest Version]](https://maven.mineking.dev/api/badge/latest/releases/de/cyklon/JUI?prefix=v&name=Latest%20Version&color=0374b5)
 
-# JEvent
+# JUI
 
 JEvent provides a powerful and lightweight event system based on the syntax of the [Spigot Event System](https://www.spigotmc.org/wiki/using-the-event-api/).
 
@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-  implementation "de.cyklon:JEvent:VERSION"
+  implementation "de.cyklon:JUI:VERSION"
 }
 ```
 
