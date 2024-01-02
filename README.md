@@ -3,11 +3,11 @@
 
 # JUI
 
-JEvent provides a powerful and lightweight event system based on the syntax of the [Spigot Event System](https://www.spigotmc.org/wiki/using-the-event-api/).
+JUI is a gui library based on java swing
 
 # Installation
 
-JEvent is hosted on a custom repository at [https://maven.mineking.dev](https://maven.mineking.dev/#/releases/de/cyklon/JEvent). Replace VERSION with the lastest version (without the `v` prefix).
+JUI is hosted on a custom repository at [https://maven.mineking.dev](https://maven.mineking.dev/#/releases/de/cyklon/JUI). Replace VERSION with the lastest version (without the `v` prefix).
 Alternatively, you can download the artifacts from jitpack (not recommended).
 
 ### Gradle
