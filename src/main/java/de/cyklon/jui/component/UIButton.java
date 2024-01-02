@@ -17,7 +17,6 @@ public class UIButton extends UIComponent {
     private final static Color color = new Color(40, 40, 40);
     private final static Color hoverColor = new Color(20, 20, 20);
 
-
     private final List<BiConsumer<App, UIButton>> leftClickListeners = new ArrayList<>();
     private final List<BiConsumer<App, UIButton>> rightClickListeners = new ArrayList<>();
 

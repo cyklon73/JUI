@@ -45,7 +45,6 @@ public class UICheckbox extends UIButton {
 		this.checkColor = checkColor;
 	}
 
-
 	public final UICheckbox addRightClickListener(BiConsumer<App, UICheckbox> consumer) {
 		addRightClickListeners(((app, btn) -> consumer.accept(app, (UICheckbox) btn)));
 		return this;
