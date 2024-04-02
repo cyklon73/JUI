@@ -95,6 +95,4 @@ public interface App extends Disposable {
 
 	Keyboard getKeyboard();
 
-	Taskbar getTaskbar();
-
 }
