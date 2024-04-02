@@ -1,10 +1,5 @@
 package de.cyklon.jui.input;
 
-public interface Mouse extends MouseInfo {
+public interface Mouse extends KeyInput, MouseInfo {
 
-	boolean isPressed(int button);
-
-	boolean isClicked(int button);
-
-	boolean isReleased(int button);
 }

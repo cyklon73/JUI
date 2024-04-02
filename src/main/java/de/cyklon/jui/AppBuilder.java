@@ -3,6 +3,7 @@ package de.cyklon.jui;
 import de.cyklon.jui.component.UIComponent;
 import de.cyklon.jui.component.UILabel;
 import de.cyklon.jui.cursor.Cursor;
+import de.cyklon.jui.input.Keyboard;
 import de.cyklon.jui.input.Mouse;
 import de.cyklon.jui.input.MouseInfo;
 import de.cyklon.jui.render.BufferedRenderer;
@@ -281,6 +282,11 @@ public class AppBuilder {
 		}
 
 		@Override
+		public Keyboard getKeyboard() {
+			return app.keyboard;
+		}
+
+		@Override
 		public void dispose() {
 			app.dispose();
 		}
@@ -308,6 +314,7 @@ public class AppBuilder {
 		private Cursor cursor;
 		private final MouseImpl mouse;
 		private final MouseInfo mouseInfo;
+		private final KeyboardImpl keyboard;
 		private UICanvas canvas;
 
 		public AppImpl(String title, boolean undecorated, double maxFps, Image icon, Dimension size) {
@@ -329,7 +336,11 @@ public class AppBuilder {
 					return mi.getScreen();
 				}
 			};
-			addMouseListener(mouse.listener());
+			this.taskbar = new TaskbarImpl(this);
+			mouse.registerListener(this);
+
+			this.keyboard = new KeyboardImpl(app);
+			keyboard.registerListener(this);
 
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -362,6 +373,7 @@ public class AppBuilder {
 			deltaTime = current - lastUpdate;
 			lastUpdate = current;
 			this.mouse.onFrame();
+			this.keyboard.onFrame();
 			if (!markedRemoval.isEmpty()) markedRemoval.forEach(id -> tasks.removeIf(c -> c.getTaskId()==id));
 			tasks.forEach(t -> t.run(app));
 			if (canvas!=null) canvas.draw(app, g);

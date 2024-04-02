@@ -92,4 +92,8 @@ public interface App extends Disposable {
 
 	MouseInfo getMouseInfo();
 
+	Keyboard getKeyboard();
+
+	Taskbar getTaskbar();
+
 }
