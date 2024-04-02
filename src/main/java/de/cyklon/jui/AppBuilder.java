@@ -336,7 +336,7 @@ public class AppBuilder {
 					return mi.getScreen();
 				}
 			};
-			this.taskbar = new TaskbarImpl(this);
+
 			mouse.registerListener(this);
 
 			this.keyboard = new KeyboardImpl(app);
