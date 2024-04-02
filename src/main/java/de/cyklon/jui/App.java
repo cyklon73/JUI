@@ -1,6 +1,7 @@
 package de.cyklon.jui;
 
 import de.cyklon.jui.cursor.Cursor;
+import de.cyklon.jui.input.Keyboard;
 import de.cyklon.jui.input.Mouse;
 import de.cyklon.jui.input.MouseInfo;
 import de.cyklon.jui.task.RunnableTask;
