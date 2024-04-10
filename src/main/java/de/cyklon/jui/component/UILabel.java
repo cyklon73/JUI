@@ -15,7 +15,7 @@ public class UILabel extends UIComponent {
 
 	private Color color = Color.BLACK;
 
-	private FontRenderer.Alignment alignment;
+	private FontRenderer.Alignment alignment = FontRenderer.Alignment.LEFT;
 
 	public UILabel(int x, int y) {
 		this(x, y, "");
