@@ -15,7 +15,7 @@ public class UILabel extends UIComponent {
 
 	private Color color = Color.BLACK;
 
-	private Alignment alignment;
+	private FontRenderer.Alignment alignment;
 
 	public UILabel(int x, int y) {
 		this(x, y, "");
@@ -52,11 +52,11 @@ public class UILabel extends UIComponent {
 		setText(new String(resource.getBytes()));
 	}
 
-	public Alignment getAlignment() {
+	public FontRenderer.Alignment getAlignment() {
 		return alignment;
 	}
 
-	public void setAlignment(Alignment alignment) {
+	public void setAlignment(FontRenderer.Alignment alignment) {
 		this.alignment = alignment;
 	}
 
@@ -68,19 +68,9 @@ public class UILabel extends UIComponent {
 			if (width==1) width = Math.max(2, fr.stringWidth(text));
 			if (height==1) height = Math.max(2, fr.stringHeight(text));
 			fr.setColor(color);
-			int xOffset = switch (alignment) {
-				case LEFT -> 0;
-				case CENTER -> width/2;
-				case RIGHT -> width;
-			};
-			fr.drawString(text, x-xOffset, y);
+			fr.setAlignment(alignment);
+			fr.drawString(text, x, y);
 			//renderer.finish();
 		}
-	}
-
-	public enum Alignment {
-		LEFT,
-		CENTER,
-		RIGHT
 	}
 }
