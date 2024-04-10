@@ -2,7 +2,6 @@ package de.cyklon.jui.component;
 
 import de.cyklon.jresource.Resource;
 import de.cyklon.jui.App;
-import de.cyklon.jui.render.BufferedRenderer;
 import de.cyklon.jui.render.FontRenderer;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +14,8 @@ public class UILabel extends UIComponent {
 	private boolean blank;
 
 	private Color color = Color.BLACK;
+
+	private Alignment alignment;
 
 	public UILabel(int x, int y) {
 		this(x, y, "");
@@ -43,6 +44,7 @@ public class UILabel extends UIComponent {
 
 	public void setText(String text) {
 		this.text = text;
+		this.blank = text.isBlank();
 		this.width = 1;
 	}
 
@@ -50,16 +52,35 @@ public class UILabel extends UIComponent {
 		setText(new String(resource.getBytes()));
 	}
 
+	public Alignment getAlignment() {
+		return alignment;
+	}
+
+	public void setAlignment(Alignment alignment) {
+		this.alignment = alignment;
+	}
+
 	@Override
 	protected void render(App app, Graphics g) {
 		if (!blank) {
 			//FontRenderer fr = renderer.startFontRenderer();
 			FontRenderer fr = new FontRenderer(g);
-			fr.setColor(color);
-			fr.drawString(text, x, y);
 			if (width==1) width = Math.max(2, fr.stringWidth(text));
 			if (height==1) height = Math.max(2, fr.stringHeight(text));
+			fr.setColor(color);
+			int xOffset = switch (alignment) {
+				case LEFT -> 0;
+				case CENTER -> width/2;
+				case RIGHT -> width;
+			};
+			fr.drawString(text, x-xOffset, y);
 			//renderer.finish();
 		}
+	}
+
+	public enum Alignment {
+		LEFT,
+		CENTER,
+		RIGHT
 	}
 }
