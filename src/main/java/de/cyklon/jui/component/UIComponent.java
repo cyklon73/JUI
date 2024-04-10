@@ -130,4 +130,29 @@ public abstract class UIComponent implements Drawable, ComponentHolder {
 		return !(point.getX()<x || point.getY()<y || point.getX()>x+getWidth() || point.getY() > y + getHeight());
 	}
 
+	public static abstract class Builder<T extends UIComponent> implements ComponentBuilder<T> {
+		protected final int x, y, width, height;
+		protected Cursor hoverCursor = null;
+		protected List<UIComponent> components = new ArrayList<>();
+
+		protected Builder(int x, int y, int width, int height) {
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+		}
+
+		@Override
+		public Builder<T> setHoverCursor(Cursor cursor) {
+			this.hoverCursor = cursor;
+			return this;
+		}
+
+		@Override
+		public Builder<T> addComponent(UIComponent component) {
+			components.add(component);
+			return this;
+		}
+	}
+
 }

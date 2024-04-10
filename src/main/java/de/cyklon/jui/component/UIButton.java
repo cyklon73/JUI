@@ -2,6 +2,7 @@ package de.cyklon.jui.component;
 
 import de.cyklon.jui.App;
 import de.cyklon.jui.cursor.Cursor;
+import de.cyklon.jui.input.Shortcut;
 import de.cyklon.jui.render.BufferedRenderer;
 
 import java.awt.*;
@@ -14,9 +15,10 @@ import java.util.function.Consumer;
 
 public class UIButton extends UIComponent {
 
-    private final static Color color = new Color(40, 40, 40);
-    private final static Color hoverColor = new Color(20, 20, 20);
+    private Color color = new Color(40, 40, 40);
+    private Color hoverColor = new Color(20, 20, 20);
 
+    private final List<Shortcut> shortcuts = new ArrayList<>();
     private final List<BiConsumer<App, UIButton>> leftClickListeners = new ArrayList<>();
     private final List<BiConsumer<App, UIButton>> rightClickListeners = new ArrayList<>();
 
@@ -48,6 +50,18 @@ public class UIButton extends UIComponent {
         super(x, y, width, height, hoverCursor);
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setHoverColor(Color hoverColor) {
+        this.hoverColor = hoverColor;
+    }
+
+    public void addShortcut(Shortcut shortcut) {
+        shortcuts.add(shortcut);
+    }
+
     @SafeVarargs
     public final UIButton addLeftClickListeners(BiConsumer<App, UIButton>... listeners) {
         this.leftClickListeners.addAll(Arrays.asList(listeners));
@@ -62,7 +76,9 @@ public class UIButton extends UIComponent {
 
     @Override
     protected void render(App app, Graphics g) {
-        if (app.getMouse().isClicked(MouseEvent.BUTTON1) && isHover(app)) this.leftClickListeners.forEach(l -> l.accept(app, this));
+        boolean shortcutPressed = false;
+        for (Shortcut shortcut : shortcuts) if (shortcut.isPressed(app)) shortcutPressed = true;
+        if ((app.getMouse().isClicked(MouseEvent.BUTTON1) && isHover(app)) || shortcutPressed) this.leftClickListeners.forEach(l -> l.accept(app, this));
         if (app.getMouse().isClicked(MouseEvent.BUTTON3) && isHover(app)) this.rightClickListeners.forEach(l -> l.accept(app, this));
         renderGraphic(app, g);
     }
@@ -72,5 +88,52 @@ public class UIButton extends UIComponent {
         g.setColor(isHover(app) ? hoverColor : color);
         g.fillRoundRect(x, y, width, height, 10, 15);
         //renderer.finish();
+    }
+
+    public static class Builder extends UIComponent.Builder<UIButton> implements ComponentBuilder<UIButton> {
+
+        private final List<Shortcut> shortcuts = new ArrayList<>();
+        private final List<BiConsumer<App, UIButton>> leftClickListeners = new ArrayList<>(), rightClickListeners = new ArrayList<>();
+        private Color color = null, hoverColor = null;
+
+        public Builder(int x, int y, int width, int height) {
+            super(x, y, width, height);
+        }
+
+        public Builder addShortcuts(Shortcut... shortcut) {
+            shortcuts.addAll(Arrays.asList(shortcut));
+            return this;
+        }
+
+        public Builder addLeftClickListeners(BiConsumer<App, UIButton>... listeners) {
+            leftClickListeners.addAll(Arrays.asList(listeners));
+            return this;
+        }
+
+        public Builder addRightClickListeners(BiConsumer<App, UIButton>... listeners) {
+            rightClickListeners.addAll(Arrays.asList(listeners));
+            return this;
+        }
+
+        public Builder setColor(Color color) {
+            this.color = color;
+            return this;
+        }
+
+        public Builder setHoverColor(Color color) {
+            this.hoverColor = color;
+            return this;
+        }
+
+        @Override
+        public UIButton build() {
+            UIButton btn = new UIButton(x, y, width, height);
+            btn.shortcuts.addAll(shortcuts);
+            btn.leftClickListeners.addAll(leftClickListeners);
+            btn.rightClickListeners.addAll(rightClickListeners);
+            if (color!=null) btn.color = color;
+            if (hoverColor!=null) btn.hoverColor = hoverColor;
+            return btn;
+        }
     }
 }
