@@ -95,4 +95,5 @@ public interface App extends Disposable {
 
 	Keyboard getKeyboard();
 
+	JFrame getInternal();
 }

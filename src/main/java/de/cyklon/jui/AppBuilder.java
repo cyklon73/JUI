@@ -287,6 +287,11 @@ public class AppBuilder {
 		}
 
 		@Override
+		public JFrame getInternal() {
+			return app;
+		}
+
+		@Override
 		public void dispose() {
 			app.dispose();
 		}
