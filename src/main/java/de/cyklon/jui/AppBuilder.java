@@ -238,7 +238,17 @@ public class AppBuilder {
 
 		@Override
 		public void setCanvas(UICanvas canvas) {
+			if (app.canvas!=null) {
+				app.removeMouseListener(app.canvas);
+				app.removeMouseWheelListener(app.canvas);
+				app.removeMouseMotionListener(app.canvas);
+				app.removeKeyListener(app.canvas);
+			}
 			app.canvas = canvas;
+			app.addMouseListener(canvas);
+			app.addMouseWheelListener(canvas);
+			app.addMouseMotionListener(canvas);
+			app.addKeyListener(canvas);
 		}
 
 		@Override
@@ -500,7 +510,7 @@ public class AppBuilder {
 		private final BufferedImage bi;
 		public Panel(Consumer<Graphics> onFrame) {
 			this.onFrame = onFrame;
-			this.component = new UILabel(20, 20, "test");
+			this.component = new UILabel(20, 20, "test", UILabel.Filter.forString());
 			renderer.startFontRenderer().drawString("test123", 20, 20);
 			bi = renderer.current;
 			renderer.finish();

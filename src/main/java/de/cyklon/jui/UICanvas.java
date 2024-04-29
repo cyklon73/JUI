@@ -6,10 +6,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
-public abstract class UICanvas implements Drawable, ComponentHolder {
+public abstract class UICanvas implements Drawable, ComponentHolder, KeyListener, MouseListener, MouseWheelListener, MouseMotionListener {
 
     private final List<UIComponent> components = new ArrayList<>();
     private Color bgColor = new Color(0, 0, 0, 0);
@@ -75,5 +76,60 @@ public abstract class UICanvas implements Drawable, ComponentHolder {
 
     public void setBgColor(@NotNull Color bgColor) {
         this.bgColor = bgColor;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        components.forEach(c -> c.keyTyped(e));
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        components.forEach(c -> c.keyPressed(e));
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        components.forEach(c -> c.keyReleased(e));
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        components.forEach(c -> c.mouseClicked(e));
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        components.forEach(c -> c.mousePressed(e));
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        components.forEach(c -> c.mouseReleased(e));
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        components.forEach(c -> c.mouseEntered(e));
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        components.forEach(c -> c.mouseExited(e));
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        components.forEach(c -> c.mouseDragged(e));
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        components.forEach(c -> c.mouseMoved(e));
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        components.forEach(c -> c.mouseWheelMoved(e));
     }
 }

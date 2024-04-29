@@ -10,10 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
-public abstract class UIComponent implements Drawable, ComponentHolder {
+public abstract class UIComponent implements Drawable, ComponentHolder, MouseListener, MouseWheelListener, MouseMotionListener, KeyListener {
 
 	static final Cursor normalCursor = null;
 	private static long cId = 0;
@@ -155,4 +156,58 @@ public abstract class UIComponent implements Drawable, ComponentHolder {
 		}
 	}
 
+	@Override
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+
+	}
 }
