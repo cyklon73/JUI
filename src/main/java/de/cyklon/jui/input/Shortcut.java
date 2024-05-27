@@ -5,6 +5,7 @@ import de.cyklon.jui.App;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
 
 public class Shortcut {
 
@@ -39,6 +40,14 @@ public class Shortcut {
     }
 
     public boolean isPressed(App app) {
+        return check(app, KeyInput::isPressed);
+    }
+
+    public boolean isClicked(App app) {
+        return check(app, KeyInput::isClicked);
+    }
+
+    public boolean check(App app, BiFunction<KeyInput, Integer, Boolean> check) {
         AtomicBoolean pressed = new AtomicBoolean(true);
 
         Mouse mouse = app.getMouse();
@@ -46,12 +55,13 @@ public class Shortcut {
 
         keyMap.forEach((k, v) -> {
             if (!switch (v) {
-                case MOUSE -> mouse.isPressed(k);
-                case KEYBOARD -> keyboard.isPressed(k);
+                case MOUSE -> check.apply(mouse, k);
+                case KEYBOARD -> check.apply(keyboard, k);
             }) pressed.set(false);
         });
         return pressed.get();
     }
+
 
     enum Type {
         MOUSE,
