@@ -20,6 +20,8 @@ public class UILabel<R> extends UIComponent {
 
 	private Color color = Color.BLACK;
 
+	private Font font = new Font("Arial", Font.PLAIN, 12);
+
 	private FontRenderer.Alignment alignment = FontRenderer.Alignment.LEFT;
 
 	public UILabel(int x, int y, Filter<R> filter) {
@@ -82,7 +84,15 @@ public class UILabel<R> extends UIComponent {
 		return focused;
 	}
 
-	private boolean isPrintableChar( char c ) {
+	public void setFont(Font font) {
+		this.font = font;
+	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	private boolean isPrintableChar(char c ) {
 		Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
 		return (!Character.isISOControl(c)) &&
 				c != KeyEvent.CHAR_UNDEFINED &&
@@ -92,7 +102,7 @@ public class UILabel<R> extends UIComponent {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		if (!focused || (!isPrintableChar(e.getKeyChar()) && ((int)e.getKeyChar())!=8)) return;
+		if (!focused || !editable || (!isPrintableChar(e.getKeyChar()) && ((int)e.getKeyChar())!=8)) return;
 		String s = getText() + e.getKeyChar();;
 		if (((int)e.getKeyChar())==8) setText(text.isEmpty() ? "" : text.substring(0, text.length()-1));
 		else if (filter.filter(s, e.getKeyChar())) {
@@ -107,6 +117,7 @@ public class UILabel<R> extends UIComponent {
 		if (!blank) {
 			//FontRenderer fr = renderer.startFontRenderer();
 			FontRenderer fr = new FontRenderer(g);
+			fr.setFont(font);
 			if (width==1) width = Math.max(10, fr.stringWidth(text));
 			if (height==1) height = Math.max(5, fr.stringHeight(text));
 			fr.setColor(color);
@@ -155,7 +166,7 @@ public class UILabel<R> extends UIComponent {
 
 				@Override
 				public Integer map(String s) {
-					return Integer.parseInt(s);
+					return s.isBlank() ? 0 : Integer.parseInt(s);
 				}
 			};
 		}
@@ -175,7 +186,7 @@ public class UILabel<R> extends UIComponent {
 
 				@Override
 				public Long map(String s) {
-					return Long.parseLong(s);
+					return s.isBlank() ? 0 : Long.parseLong(s);
 				}
 			};
 		}
@@ -196,7 +207,7 @@ public class UILabel<R> extends UIComponent {
 
 				@Override
 				public Double map(String s) {
-					return Double.parseDouble(s);
+					return s.isBlank() ? 0 : Double.parseDouble(s);
 				}
 			};
 		}
