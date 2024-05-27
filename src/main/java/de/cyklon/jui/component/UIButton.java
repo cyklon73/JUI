@@ -3,7 +3,6 @@ package de.cyklon.jui.component;
 import de.cyklon.jui.App;
 import de.cyklon.jui.cursor.Cursor;
 import de.cyklon.jui.input.Shortcut;
-import de.cyklon.jui.render.BufferedRenderer;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class UIButton extends UIComponent {
 
@@ -76,9 +74,9 @@ public class UIButton extends UIComponent {
 
     @Override
     protected void render(App app, Graphics g) {
-        boolean shortcutPressed = false;
-        for (Shortcut shortcut : shortcuts) if (shortcut.isPressed(app)) shortcutPressed = true;
-        if ((app.getMouse().isClicked(MouseEvent.BUTTON1) && isHover(app)) || shortcutPressed) this.leftClickListeners.forEach(l -> l.accept(app, this));
+        boolean shortcutClicked = false;
+        for (Shortcut shortcut : shortcuts) if (shortcut.isClicked(app)) shortcutClicked = true;
+        if ((app.getMouse().isClicked(MouseEvent.BUTTON1) && isHover(app)) || shortcutClicked) this.leftClickListeners.forEach(l -> l.accept(app, this));
         if (app.getMouse().isClicked(MouseEvent.BUTTON3) && isHover(app)) this.rightClickListeners.forEach(l -> l.accept(app, this));
         renderGraphic(app, g);
     }
