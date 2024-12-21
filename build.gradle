@@ -19,7 +19,7 @@ repositories {
 dependencies {
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
-    implementation 'de.cyklon:JEvent:1.4.0'
+    implementation 'de.cyklon:JEvent:1.4.1'
     implementation 'de.cyklon:JResource:1.1.1'
 
     testImplementation platform('org.junit:junit-bom:5.9.1')
