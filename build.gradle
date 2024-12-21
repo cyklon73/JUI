@@ -12,14 +12,14 @@ var release = System.getenv("RELEASE") == "true"
 
 repositories {
     mavenCentral()
-    maven { url 'https://maven.mineking.dev/releases' }
-    maven { url 'https://maven.mineking.dev/snapshots' }
+    maven { url 'https://maven.cyklon.dev/releases' }
+    maven { url 'https://maven.cyklon.dev/snapshots' }
 }
 
 dependencies {
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
-    implementation 'de.cyklon:JEvent:1.1.0'
+    implementation 'de.cyklon:JEvent:1.4.0'
     implementation 'de.cyklon:JResource:1.1.1'
 
     testImplementation platform('org.junit:junit-bom:5.9.1')
